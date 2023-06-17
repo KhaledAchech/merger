@@ -7,7 +7,9 @@ def select_pdf_files():
     pdf_files = filedialog.askopenfilenames(filetypes=[("PDF Files", "*.pdf")])
 
     if pdf_files:
-        merge_pdfs(pdf_files)
+        # Sort the files based on the select order
+        sorted_files = sorted(pdf_files, key=lambda x: pdf_files.index(x))
+        merge_pdfs(sorted_files)
     else:
         # Show an error message if no files were selected
         message_label.config(text="No PDF files selected.")
