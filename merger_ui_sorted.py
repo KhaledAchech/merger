@@ -23,17 +23,43 @@ def rearrange_pdf_files(pdf_files):
 
     def move_up():
         selected_indices = listbox.curselection()
+        if not selected_indices:
+            return
+
         for i in selected_indices:
             if i > 0:
-                listbox.delete(i)
-                listbox.insert(i - 1, pdf_files[i])
+                # Swap listbox items and update pdf_files list accordingly
+                file_to_move = pdf_files.pop(i)
+                pdf_files.insert(i - 1, file_to_move)
+
+        # Redraw the listbox after rearranging
+        listbox.delete(0, "end")
+        for file in pdf_files:
+            listbox.insert("end", file)
+
+        # Restore the selection after rearranging
+        for i in selected_indices:
+            listbox.selection_set(i - 1)
 
     def move_down():
         selected_indices = listbox.curselection()
+        if not selected_indices:
+            return
+
         for i in reversed(selected_indices):
             if i < listbox.size() - 1:
-                listbox.delete(i)
-                listbox.insert(i + 1, pdf_files[i])
+                # Swap listbox items and update pdf_files list accordingly
+                file_to_move = pdf_files.pop(i)
+                pdf_files.insert(i + 1, file_to_move)
+
+        # Redraw the listbox after rearranging
+        listbox.delete(0, "end")
+        for file in pdf_files:
+            listbox.insert("end", file)
+
+        # Restore the selection after rearranging
+        for i in selected_indices:
+            listbox.selection_set(i + 1)
 
     def on_done():
         selected_files = listbox.get(0, "end")
@@ -63,7 +89,8 @@ def select_pdf_files():
     pdf_files = filedialog.askopenfilenames(filetypes=[("PDF Files", "*.pdf")])
 
     if pdf_files:
-        rearrange_pdf_files(pdf_files)
+        # Create a copy to avoid modifying the original list
+        rearrange_pdf_files(list(pdf_files))
     else:
         # Show an error message if no files were selected
         message_label.config(text="No PDF files selected.")
